@@ -10,24 +10,22 @@ router {
 			get {
 				mongo.getFeeds fail | it.&yield
 			}
+			get('/feeds/:id') {
+				mongo.getFeed params['id'], fail | it.&yield
+			}
 			post {
 				Feed feed = body as Feed
-				if (!feed.valid) fail 400
-				else it++
+				if (!feed?.valid) fail 400
+				else {
+					mongo.createFeed body as Feed, fail | it.&yield
+				}
 			}
-			post {
-				mongo.createFeed body as Feed, fail | it.&yield
-			}
-		}
-		get('/feeds/:id') {
-			mongo.getFeed params['id'], fail | it.&yield
 		}
 		route('/projects') {
 			get { ctx ->
 				mongo.getProjects {
-					if(-it) it.cause().printStackTrace()
-					println it
-					ctx.yield it
+					if(!it) ctx.fail it.cause
+					else ctx.yield it
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 package com.github.aesteve.vertx.portal.verticles
 
 import com.github.aesteve.vertx.portal.dao.MongoDAO
+import groovy.transform.TypeChecked
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.groovy.core.http.HttpClient
@@ -9,6 +10,7 @@ import io.vertx.lang.groovy.GroovyVerticle
 
 import static io.vertx.core.http.HttpHeaders.USER_AGENT
 
+@TypeChecked
 class GithubBroker extends GroovyVerticle {
 
 	private static final Logger log = LoggerFactory.getLogger GithubBroker.class
@@ -32,17 +34,16 @@ class GithubBroker extends GroovyVerticle {
 		}
 	}
 
-	void findVertxProjects(Long timerId) {
+	void findVertxProjects(Long timerId = null) {
 		log.info "find projects"
 		HttpClientRequest req = http['/search/repositories?q=vertx&sort=stars&per_page=1000']
 		req.headers[USER_AGENT] = 'vertx-portal'
 		req >> { response ->
-			println response.statusCode
 			response >>> {
 				Map body = it as Map
 				log.info body.total_count
 				def items = body.items.collect {
-					it.score = Math.round it.score
+					it['score'] = Math.round it['score'] as Double
 					it
 				}
 				items.each mongo.&createProject

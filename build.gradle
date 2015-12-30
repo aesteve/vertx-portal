@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-	compile "com.github.aesteve:vertx-groovy-sugar:0.4"
+	compile "com.github.aesteve:grooveex:0.6"
 	compile "io.vertx:vertx-mongo-client:$vertxVersion"
 
 	testCompile 'junit:junit:4.12'

@@ -10,6 +10,7 @@ import io.vertx.core.logging.LoggerFactory
 import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.ext.mongo.MongoClient
 
+@TypeChecked
 class MongoDAO {
 
 	private final static Logger log = LoggerFactory.getLogger MongoDAO.class
@@ -24,11 +25,11 @@ class MongoDAO {
 	}
 
 	void getFeed(String id, Handler<AsyncResult<Feed>> handler) {
-		Map<String, Object> query = ['_id', id]
+		Map<String, Object> query = ['_id', id] as Map<String, Object>
 		mongo.findOne FEEDS_COLLECTION, query, null, { res ->
-			if (-res) handler.handle res
+			if (!res) handler.handle Future.failedFuture(res.cause())
 			else {
-				if (!res.result) handler.handle res
+				if (!res.result) handler.handle Future.succeededFuture()
 				else {
 					Feed feed = res.result as Feed // map constructor
 					handler.handle Future.succeededFuture(feed)
@@ -39,9 +40,9 @@ class MongoDAO {
 
 	void createFeed(Feed feed, Handler<AsyncResult<Feed>> handler) {
 		mongo.insert FEEDS_COLLECTION, feed as Map, { res ->
-			if (-res) handler.handle res
+			if (!res) handler.handle Future.failedFuture(res.cause())
 			else {
-				if (!res.result) handler.handle res
+				if (!res.result) handler.handle Future.succeededFuture(feed)
 				else {
 					feed._id = res.result
 					handler.handle Future.succeededFuture(feed)
@@ -52,7 +53,7 @@ class MongoDAO {
 
 	void getFeeds(Handler<AsyncResult<Collection<Feed>>> handler) {
 		mongo.find FEEDS_COLLECTION, [:], { res ->
-			if (-res) handler.handle res
+			if (!res) handler.handle res
 			else {
 				if (!res.result) handler.handle Future.succeededFuture([])
 				else {
@@ -69,7 +70,7 @@ class MongoDAO {
 
 	void createProject(Map project) {
 		mongo.insert PROJECTS_COLLECTION, project, { res ->
-			if (-res) log.error res.cause()
+			if (!res) log.error res.cause()
 		}
 	}
 
