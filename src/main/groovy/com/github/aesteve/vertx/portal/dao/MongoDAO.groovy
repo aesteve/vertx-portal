@@ -10,7 +10,6 @@ import io.vertx.core.logging.LoggerFactory
 import io.vertx.groovy.core.Vertx
 import io.vertx.groovy.ext.mongo.MongoClient
 
-@TypeChecked
 class MongoDAO {
 
 	private final static Logger log = LoggerFactory.getLogger MongoDAO.class
@@ -62,6 +61,10 @@ class MongoDAO {
 				}
 			}
 		}
+	}
+
+	void findProject(Map project, Handler<AsyncResult<Map>> handler) {
+		mongo.findOne PROJECTS_COLLECTION, project, null, handler
 	}
 
 	void deleteProjects(Handler<AsyncResult<Void>> handler) {

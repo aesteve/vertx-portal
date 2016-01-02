@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
+	compile 'org.codehaus.groovy:groovy-all:2.4.5'
 	compile "com.github.aesteve:grooveex:0.6"
 	compile "io.vertx:vertx-mongo-client:$vertxVersion"
 

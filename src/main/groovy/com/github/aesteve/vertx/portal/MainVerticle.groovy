@@ -9,7 +9,6 @@ import io.vertx.core.Future
 import io.vertx.groovy.core.http.HttpServer
 import io.vertx.lang.groovy.GroovyVerticle
 
-@TypeChecked
 class MainVerticle extends GroovyVerticle {
 
 	HttpServer server

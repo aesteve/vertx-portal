@@ -6,6 +6,11 @@ router {
 	route('/api/1') {
 		consumes 'application/json'
 		produces 'application/json'
+		route('/test') {
+			get {
+				response << 'test'
+			}
+		}
 		route('/feeds') {
 			get {
 				mongo.getFeeds fail | it.&yield
@@ -17,16 +22,13 @@ router {
 				Feed feed = body as Feed
 				if (!feed?.valid) fail 400
 				else {
-					mongo.createFeed body as Feed, fail | it.&yield
+					mongo.createFeed feed, fail | it.&yield
 				}
 			}
 		}
 		route('/projects') {
-			get { ctx ->
-				mongo.getProjects {
-					if(!it) ctx.fail it.cause
-					else ctx.yield it
-				}
+			get {
+				mongo.getProjects fail | it.&yield
 			}
 		}
 	}
